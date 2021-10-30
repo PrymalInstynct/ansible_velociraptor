@@ -1,0 +1,5 @@
+# .ansible-lint
+skip_list:  # Silence these rules completely
+  - deprecated-local-action  # Do not use 'local_action', use 'delegate_to: localhost'
+  - no-changed-when  # Commands should not change things if nothing needs doing
+  - yaml  # Violations reported by yamllint

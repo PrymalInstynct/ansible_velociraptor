@@ -1,0 +1,24 @@
+---
+- name: Uninstall MacOS Client | Stop Velociraptor Client"
+  systemd:
+    name: velociraptor
+    state: stopped
+    enabled: false
+  when: "'velociraptor-client' in services"
+
+- name: Uninstall MacOS Client | Remove Velociraptor Client Service Unit File"
+  file:
+    path: /lib/systemd/system/velociraptor-client.service
+    state: absent
+
+- name: Uninstall MacOS Client | Reload Systemd"
+  systemd:
+    daemon_reload: true
+
+- name: Uninstall MacOS Client | Uninstall Velociraptor Client"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /opt/velociraptor
+    - /etc/velociraptor

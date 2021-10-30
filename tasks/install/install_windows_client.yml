@@ -1,0 +1,21 @@
+---
+- name: "Windows Client | Create directory"
+  win_file:
+    path: "{{ _velociraptor_windows_dir }}"
+    state: directory
+
+- name: "Windows Client | Get velociraptor msi"
+  win_get_url:
+    url: "{{ velociraptor_url }}"
+    dest: "{{ _velociraptor_windows_dir }}{{ velociraptor_msi }}"
+
+- name: "Windows Client | Install velociraptor msi"
+  win_package:
+    path: "{{ _velociraptor_windows_dir }}{{ velociraptor_msi }}"
+    state: present
+
+- name: "Windows Client | Copy velociraptor client config"
+  win_copy:
+    src: client.config.yaml
+    dest: "{{ _velociraptor_windows_dir }}Velociraptor.config.yaml"
+  notify: restart velociraptor windows client

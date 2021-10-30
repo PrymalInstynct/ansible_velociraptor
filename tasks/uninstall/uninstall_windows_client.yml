@@ -1,0 +1,15 @@
+---
+- name: "Windows Client | Stop Velociraptor Service"
+  win_service:
+    name: Velociraptor
+    state: stopped
+
+- name: "Windows Client | Uninstall velociraptor msi"
+  win_package:
+    path: "{{ _velociraptor_windows_dir }}{{ velociraptor_msi }}"
+    state: absent
+
+- name: "Windows Client | Remove directory"
+  win_file:
+    path: "{{ _velociraptor_windows_dir }}"
+    state: absent

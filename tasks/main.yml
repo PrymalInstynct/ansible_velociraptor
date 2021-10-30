@@ -1,0 +1,22 @@
+---
+- name: Include OS Specific Variables
+  include_vars: "{{ ansible_os_family }}-{{ ansible_architecture }}.yml"
+  tags:
+    - always
+
+- name: "Gather Service Facts"
+  service_facts:
+  when: ansible_os_family != "Windows"
+  tags:
+    - always
+
+- name: "Install Velociraptor"
+  import_tasks: install_velociraptor.yml
+  tags:
+    - install
+
+- name: "Uninstall Velociraptor"
+  import_tasks: uninstall_velociraptor.yml
+  tags:
+    - never
+    - uninstall

@@ -1,0 +1,4 @@
+---
+ansible_connection: ssh
+ansible_user: changeme
+ansible_password: changeme

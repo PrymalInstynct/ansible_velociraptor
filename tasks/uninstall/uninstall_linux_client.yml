@@ -1,0 +1,24 @@
+---
+- name: Uninstall Linux Client | Stop Velociraptor Client"
+  systemd:
+    name: velociraptor-client
+    state: stopped
+    enabled: false
+  when: "'velociraptor-client.service' in services"
+
+- name: Uninstall Linux Client | Remove Velociraptor Client Service Unit File"
+  file:
+    path: /lib/systemd/system/velociraptor-client.service
+    state: absent
+
+- name: Uninstall Linux Client | Reload Systemd"
+  systemd:
+    daemon_reload: true
+
+- name: Uninstall Linux Client | Uninstall Velociraptor Client"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /opt/velociraptor
+    - /etc/velociraptor

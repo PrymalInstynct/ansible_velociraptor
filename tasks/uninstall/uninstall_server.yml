@@ -1,0 +1,24 @@
+---
+- name: "Uninstall Server | Stop Velociraptor Server"
+  systemd:
+    name: velociraptor
+    state: stopped
+    enabled: false
+  when: "'velociraptor.service' in services"
+
+- name: "Uninstall Server | Remove Velociraptor Server Service Unit File"
+  file:
+    path: /lib/systemd/system/velociraptor.service
+    state: absent
+
+- name: "Uninstall Server | Reload Systemd"
+  systemd:
+    daemon_reload: true
+
+- name: "Uninstall Server | Uninstall Velociraptor Server"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /opt/velociraptor
+    - /etc/velociraptor

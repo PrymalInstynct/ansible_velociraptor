@@ -1,0 +1,23 @@
+---
+- name: restart velociraptor-server
+  systemd:
+    name: velociraptor
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: URL
+  debug:
+    msg: "You can reach Velociraptor via https://{{ ansible_default_ipv4.address }}:8889/"
+
+- name: restart velociraptor nix client
+  systemd:
+    name: velociraptor-client
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: restart velociraptor windows client
+  win_service:
+    name: Velociraptor
+    state: restarted

@@ -1,0 +1,23 @@
+---
+all:
+  children:
+    velociraptor_servers:
+      hosts:
+        10.10.10.61:
+          velociraptor_server: true
+
+    velociraptor_clients:
+      hosts:
+        10.10.10.62:
+          velociraptor_client: true
+        10.10.100.10:
+          velociraptor_client: true
+
+nix:
+  hosts:
+    10.10.10.61:
+    10.10.10.62:
+
+windows:
+  hosts:
+    10.10.100.10:

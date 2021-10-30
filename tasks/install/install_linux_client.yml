@@ -1,0 +1,38 @@
+---
+- name: "Install Linux Client | Create Velociraptor directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+  with_items:
+    - "{{ velociraptor_dir }}"
+    - "{{ velociraptor_config_dir }}"
+
+- name: "Install Linux Client | Download velociraptor binary"
+  get_url:
+    url: "{{ velociraptor_url }}"
+    dest: "{{ velociraptor_dir }}/velociraptor"
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: "Install Linux Client | Copy velociraptor client config"
+  copy:
+    src: client.config.yaml
+    dest: "{{ velociraptor_config_dir }}/client.config.yaml"
+    owner: root
+    group: root
+    mode: '0640'
+  notify: restart velociraptor nix client
+
+- name: "Install Linux Client | Install velociraptor systemd configuration"
+  template:
+    src: systemd-velociraptor-client.service.j2
+    dest: /lib/systemd/system/velociraptor-client.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: systemd
+  notify: restart velociraptor nix client

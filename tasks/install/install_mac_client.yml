@@ -1,0 +1,44 @@
+---
+- name: "Install MacOS Client | Create Velociraptor directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+  with_items:
+    - "{{ velociraptor_dir }}"
+    - "{{ velociraptor_config_dir }}"
+
+- name: "Install MacOS Client | Download velociraptor binary"
+  get_url:
+    url: "{{ velociraptor_url }}"
+    dest: "{{ velociraptor_dir }}/velociraptor"
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: "Install MacOS Client | Copy velociraptor client config"
+  copy:
+    dest: "{{ velociraptor_config_dir }}/client.config.yaml"
+    src: client.config.yaml
+    owner: root
+    group: root
+    mode: '0640'
+  notify: restart velociraptor nix client
+
+- name: "Install MacOS Client | Install velociraptor systemd configuration"
+  template:
+    src: systemd-velociraptor-client.service.j2
+    dest: /lib/systemd/system/velociraptor-client.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: systemd
+  notify: reload velociraptor-client
+
+- name: "Install MacOS Client | Enable and start velociraptor-client systemd service"
+  service:
+    name: velociraptor-client
+    enabled: true
+    state: 'started'
