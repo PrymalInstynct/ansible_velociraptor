@@ -4,6 +4,7 @@ dependencies: []
 
 galaxy_info:
   author: prymalinstynct
+  role_name: velociraptor
   description: "Velociraptor Server/Client Install"
   license: "license (BSD, MIT)"
   min_ansible_version: 2.9

@@ -2,4 +2,4 @@
 - hosts: all
   become: true
   roles:
-    - ansible_velociraptor
+    - prymalinstynct.velociraptor
