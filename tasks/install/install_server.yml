@@ -76,8 +76,6 @@
   copy:
     content: "{{ clientconfig.stdout }}"
     dest: "{{ role_path }}/files/client.config.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
     mode: '0664'
   delegate_to: localhost
 
