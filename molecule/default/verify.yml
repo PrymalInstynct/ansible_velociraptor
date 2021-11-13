@@ -1,0 +1,20 @@
+---
+
+- name: Verify
+  hosts: dinosaurs
+  tasks:
+    - name: Check client systemd is present
+      stat:
+        path: /lib/systemd/system/velociraptor-client.service
+      register: systemd
+    - name: Validate systemd service file is present
+      assert:
+        that: systemd.stat.exists
+
+    - name: Run velociraptor version
+      command: /opt/velociraptor/velociraptor version
+      changed_when: false
+      register: v
+    - name: Validate run
+      assert:
+        that: "'name: velociraptor' in v.stdout"

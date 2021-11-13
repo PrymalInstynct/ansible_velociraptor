@@ -1,3 +1,5 @@
+---
+
 - name: Include Vaulted Variables
   include_vars: "vault.yml"
 
@@ -29,8 +31,6 @@
   copy:
     content: "{{ server_config.stdout }}"
     dest: "{{ role_path }}/files/server.config.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
     mode: '0664'
   delegate_to: localhost
 
@@ -76,8 +76,6 @@
   copy:
     content: "{{ clientconfig.stdout }}"
     dest: "{{ role_path }}/files/client.config.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
     mode: '0664'
   delegate_to: localhost
 
