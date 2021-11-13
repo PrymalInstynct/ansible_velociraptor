@@ -2,6 +2,6 @@
 
 velociraptor_client: false
 velociraptor_server: false
-velociraptor_version: "v0.6.1"
+velociraptor_version: "v0.6.2"
 velociraptor_admin_user: admin
 velociraptor_admin_password: "{{ vault_velociraptor_admin_password }}"
