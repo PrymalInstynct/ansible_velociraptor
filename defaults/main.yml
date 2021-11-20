@@ -5,3 +5,12 @@ velociraptor_server: false
 velociraptor_version: "v0.6.2"
 velociraptor_admin_user: admin
 velociraptor_admin_password: "{{ vault_velociraptor_admin_password }}"
+velociraptor_host: "{{ ansible_default_ipv4.address }}"
+velociraptor_port: 8000
+velociraptor_selfsigned_ssl: true
+velociraptor_prevent_execve: false
+velociraptor_api_host: '127.0.0.1'
+velociraptor_api_port: 8001
+velociraptor_gui_host: '127.0.0.1'
+velociraptor_gui_port: 8889
+velociraptor_datastore_path: /var/tmp/velociraptor

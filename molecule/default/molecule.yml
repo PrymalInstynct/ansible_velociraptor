@@ -33,7 +33,7 @@ scenario:
     - create
     - prepare
     - converge
-    # - idempotence
+    - idempotence
     - verify
 verifier:
   name: ansible

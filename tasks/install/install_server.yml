@@ -23,54 +23,39 @@
     mode: '0750'
 
 - name: "Install Server | Generate Velociraptor Server Config"
-  command: "{{ velociraptor_dir }}/velociraptor config generate"
+  shell: "{{ velociraptor_dir }}/velociraptor config generate --merge \
+      '{\"Client\": {
+          \"server_urls\": [\"https://{{ velociraptor_host }}:{{ velociraptor_port }}/\"],
+          \"use_self_signed_ssl\": {{ velociraptor_selfsigned_ssl | lower }},
+          \"prevent_execve\": {{ velociraptor_prevent_execve | lower }}
+       }, \"API\": {
+          \"bind_address\": \"{{ velociraptor_api_host }}\",
+          \"bind_port\": {{ velociraptor_api_port }}
+       }, \"GUI\": {
+          \"bind_address\": \"{{ velociraptor_gui_host }}\",
+          \"bind_port\": {{ velociraptor_gui_port }}
+       }, \"Datastore\": {
+          \"location\": \"{{ velociraptor_datastore_path }}/\",
+          \"filestore_directory\": \"{{ velociraptor_datastore_path }}/\"
+       }}' > {{ velociraptor_config_dir }}/server.config.yaml"
+  args:
+    creates: "{{ velociraptor_config_dir }}/server.config.yaml"
   register: server_config
-  changed_when: false
+  failed_when: "server_config.stderr is defined and 'Invalid merge patch' in server_config.stderr"
+  notify: restart velociraptor-server
 
-- name: "Install Server | Copy Velociraptor Server Config Locally"
-  copy:
-    content: "{{ server_config.stdout }}"
-    dest: "{{ role_path }}/files/server.config.yaml"
-    mode: '0664'
-  delegate_to: localhost
-
-- name: "Install Server | Edit {{ role_path }}/files/server.config.yaml"
-  replace:
-    path: "{{ role_path }}/files/server.config.yaml"
-    regexp: "  - https://localhost:8000/"
-    replace: "  - https://{{ ansible_default_ipv4.address }}:8000/"
-  delegate_to: localhost
-
-- name: "Install Server | Edit {{ role_path }}/files/server.config.yaml"
-  replace:
-    path: "{{ role_path }}/files/server.config.yaml"
-    regexp: "  bind_address: 127.0.0.1"
-    replace: "  bind_address: 0.0.0.0"
-    after: "GUI:"
-    before: "  gw_certificate:"
-  delegate_to: localhost
-
-- name: "Install Server | Edit {{ role_path }}/files/server.config.yaml to use self signed cert"
-  lineinfile:
-    path: "{{ role_path }}/files/server.config.yaml"
-    regexp: "  use_self_signed_ssl.*"
-    line: '  use_self_signed_ssl: true'
-    insertafter: 'Client:'
-  delegate_to: localhost
-
-- name: "Install Server | Copy Velociraptor Server Config"
-  copy:
-    dest: "{{ velociraptor_config_dir }}/server.config.yaml"
-    src: "{{ role_path }}/files/server.config.yaml"
+- name: "Install Server | Validate Velociraptor Server Config permissions"
+  file:
+    path: "{{ velociraptor_config_dir }}/server.config.yaml"
     owner: root
     group: root
     mode: '0640'
-  notify: restart velociraptor-server
 
 - name: "Install Server | Generate velociraptor client config"
   command: "{{ velociraptor_dir }}/velociraptor -c {{ velociraptor_config_dir }}/server.config.yaml config client"
   register: clientconfig
   changed_when: false
+  failed_when: "clientconfig.stderr is defined and 'error:' in clientconfig.stderr"
 
 - name: "Install Server | Copy Velociraptor Client Config Locally"
   copy:
@@ -79,17 +64,10 @@
     mode: '0664'
   delegate_to: localhost
 
-- name: "Install Server | Edit {{ role_path }}/files/client.config.yaml to use self signed cert"
-  lineinfile:
-    path: "{{ role_path }}/files/client.config.yaml"
-    regexp: "  use_self_signed_ssl.*"
-    line: '  use_self_signed_ssl: true'
-    insertafter: 'Client:'
-  delegate_to: localhost
-
 - name: "Install Server | Update Apt Cache"
   apt:
     update_cache: true
+    cache_valid_time: "{{ velociraptor_apt_cache_valid_time | default(3600) }}"
   when: ansible_os_family == "Debian"
 
 - name: "Install Server | Update Yum Cache"
@@ -110,6 +88,7 @@
     command: "/opt/velociraptor/velociraptor --config /etc/velociraptor/server.config.yaml user add {{ velociraptor_admin_user }} --role=administrator"
     responses:
       (?i)Enter user's password: "{{ velociraptor_admin_password }}"
+    creates: "{{ velociraptor_datastore_path }}/users/{{ velociraptor_admin_user }}.db"
 
 - name: "Install Server | Install Velociraptor Systemd Configuration"
   template:
