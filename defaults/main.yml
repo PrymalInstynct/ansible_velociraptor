@@ -5,7 +5,7 @@ velociraptor_server: false
 velociraptor_version: "v0.6.2"
 velociraptor_admin_user: admin
 velociraptor_admin_password: "{{ vault_velociraptor_admin_password }}"
-velociraptor_host: "{{ ansible_default_ipv4.address) }}"
+velociraptor_host: "{{ ansible_default_ipv4.address }}"
 velociraptor_port: 8000
 velociraptor_selfsigned_ssl: true
 velociraptor_prevent_execve: false
