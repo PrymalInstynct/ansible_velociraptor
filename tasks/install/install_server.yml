@@ -84,7 +84,7 @@
     name: pexpect
 
 - name: "Install Server | Add Admin User to WebGui"
-  expect:
+  ansible.builtin.expect:
     command: "/opt/velociraptor/velociraptor --config /etc/velociraptor/server.config.yaml user add {{ velociraptor_admin_user }} --role=administrator"
     responses:
       (?i)Enter user's password: "{{ velociraptor_admin_password }}"
