@@ -1,11 +1,11 @@
 ---
 - name: Include OS Specific Variables
-  include_vars: "{{ ansible_os_family }}-{{ ansible_architecture }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_os_family }}-{{ ansible_architecture }}.yml"
   tags:
     - always
 
 - name: "Gather Service Facts"
-  service_facts:
+  ansible.builtin.service_facts:
   when: ansible_os_family != "Windows"
   tags:
     - always
