@@ -4,17 +4,17 @@
   hosts: dinosaurs
   tasks:
     - name: Check client systemd is present
-      stat:
+      ansible.builtin.stat:
         path: /lib/systemd/system/velociraptor-client.service
       register: systemd
     - name: Validate systemd service file is present
-      assert:
+      ansible.builtin.assert:
         that: systemd.stat.exists
 
     - name: Run velociraptor version
-      command: /opt/velociraptor/velociraptor version
+      ansible.builtin.command: /opt/velociraptor/velociraptor version
       changed_when: false
       register: v
     - name: Validate run
-      assert:
+      ansible.builtin.assert:
         that: "'name: velociraptor' in v.stdout"

@@ -1,10 +1,10 @@
 ---
 
 - name: Include Vaulted Variables
-  include_vars: "vault.yml"
+  ansible.builtin.include_vars: "vault.yml"
 
 - name: "Install Server | Create Velociraptor Directories"
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: root
@@ -15,7 +15,7 @@
     - "{{ velociraptor_config_dir }}"
 
 - name: "Install Server | Download Velociraptor Binary"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ velociraptor_url }}"
     dest: "{{ velociraptor_dir }}/velociraptor"
     owner: root
@@ -23,7 +23,7 @@
     mode: '0750'
 
 - name: "Install Server | Generate Velociraptor Server Config"
-  shell: "{{ velociraptor_dir }}/velociraptor config generate --merge \
+  ansible.builtin.shell: "{{ velociraptor_dir }}/velociraptor config generate --merge \
       '{\"Client\": {
           \"server_urls\": [\"https://{{ velociraptor_host }}:{{ velociraptor_port }}/\"],
           \"use_self_signed_ssl\": {{ velociraptor_selfsigned_ssl | lower }},
@@ -45,53 +45,53 @@
   notify: restart velociraptor-server
 
 - name: "Install Server | Validate Velociraptor Server Config permissions"
-  file:
+  ansible.builtin.file:
     path: "{{ velociraptor_config_dir }}/server.config.yaml"
     owner: root
     group: root
     mode: '0640'
 
 - name: "Install Server | Generate velociraptor client config"
-  command: "{{ velociraptor_dir }}/velociraptor -c {{ velociraptor_config_dir }}/server.config.yaml config client"
+  ansible.builtin.command: "{{ velociraptor_dir }}/velociraptor -c {{ velociraptor_config_dir }}/server.config.yaml config client"
   register: clientconfig
   changed_when: false
   failed_when: "clientconfig.stderr is defined and 'error:' in clientconfig.stderr"
 
 - name: "Install Server | Copy Velociraptor Client Config Locally"
-  copy:
+  ansible.builtin.copy:
     content: "{{ clientconfig.stdout }}"
     dest: "{{ role_path }}/files/client.config.yaml"
     mode: '0664'
   delegate_to: localhost
 
 - name: "Install Server | Update Apt Cache"
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: "{{ velociraptor_apt_cache_valid_time | default(3600) }}"
   when: ansible_os_family == "Debian"
 
 - name: "Install Server | Update Yum Cache"
-  yum:
+  ansible.builtin.yum:
     update_cache: true
   when: ansible_os_family == "RedHat"
 
 - name: "Install Server | Install pip3"
-  package:
+  ansible.builtin.package:
     name: python3-pip
 
 - name: "Install Server | PIP Install pexpect"
-  pip:
+  ansible.builtin.pip:
     name: pexpect
 
 - name: "Install Server | Add Admin User to WebGui"
-  expect:
+  ansible.builtin.expect:
     command: "/opt/velociraptor/velociraptor --config /etc/velociraptor/server.config.yaml user add {{ velociraptor_admin_user }} --role=administrator"
     responses:
       (?i)Enter user's password: "{{ velociraptor_admin_password }}"
     creates: "{{ velociraptor_datastore_path }}/users/{{ velociraptor_admin_user }}.db"
 
 - name: "Install Server | Install Velociraptor Systemd Configuration"
-  template:
+  ansible.builtin.template:
     src: systemd-velociraptor.service.j2
     dest: /lib/systemd/system/velociraptor.service
     owner: root

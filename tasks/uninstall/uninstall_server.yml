@@ -1,22 +1,22 @@
 ---
 - name: "Uninstall Server | Stop Velociraptor Server"
-  systemd:
+  ansible.builtin.systemd:
     name: velociraptor
     state: stopped
     enabled: false
   when: "'velociraptor.service' in services"
 
 - name: "Uninstall Server | Remove Velociraptor Server Service Unit File"
-  file:
+  ansible.builtin.file:
     path: /lib/systemd/system/velociraptor.service
     state: absent
 
 - name: "Uninstall Server | Reload Systemd"
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
 
 - name: "Uninstall Server | Uninstall Velociraptor Server"
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:

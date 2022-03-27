@@ -1,6 +1,6 @@
 ---
 - name: "Install Linux Client | Create Velociraptor directories"
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: root
@@ -11,7 +11,7 @@
     - "{{ velociraptor_config_dir }}"
 
 - name: "Install Linux Client | Download velociraptor binary"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ velociraptor_url }}"
     dest: "{{ velociraptor_dir }}/velociraptor"
     owner: root
@@ -19,7 +19,7 @@
     mode: '0750'
 
 - name: "Install Linux Client | Copy velociraptor client config"
-  copy:
+  ansible.builtin.copy:
     src: client.config.yaml
     dest: "{{ velociraptor_config_dir }}/client.config.yaml"
     owner: root
@@ -28,7 +28,7 @@
   notify: restart velociraptor nix client
 
 - name: "Install Linux Client | Install velociraptor systemd configuration"
-  template:
+  ansible.builtin.template:
     src: systemd-velociraptor-client.service.j2
     dest: /lib/systemd/system/velociraptor-client.service
     owner: root
