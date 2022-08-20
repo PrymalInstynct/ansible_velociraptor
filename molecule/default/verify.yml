@@ -2,6 +2,18 @@
 
 - name: Verify
   hosts: dinosaurs
+  vars:
+    server_config_file: /etc/velociraptor/server.config.yaml
+    server_datastore: /var/tmp/velociraptor
+    ports:
+      # clients access
+      - { h: 0.0.0.0, p: 8888 }
+      # API
+      - { h: localhost, p: 8001 }
+      - { h: localhost, p: 8003 }
+      # web UI
+      - { h: localhost, p: 8889 }
+    url: https://localhost:8889
   tasks:
     - name: Check client systemd is present
       ansible.builtin.stat:
@@ -18,3 +30,69 @@
     - name: Validate run
       ansible.builtin.assert:
         that: "'name: velociraptor' in v.stdout"
+
+    # server side
+    - name: Check velociraptor server config file
+      ansible.builtin.stat:
+        path: "{{ server_config_file }}"
+      register: cfg
+    - name: Validate velociraptor server config is present
+      ansible.builtin.assert:
+        that:
+          - cfg.stat.exists
+          - cfg.stat.size != 0
+          - cfg.stat.mode == '0640'
+      ignore_errors: yes
+
+    - name: Ensure velociraptor process is running
+      ansible.builtin.command: pgrep -u root velociraptor
+      register: ps3
+      changed_when: false
+      failed_when: false
+    - name: Validate ps output
+      ansible.builtin.assert:
+        that: ps3.stdout
+      when: >
+        not (ansible_virtualization_type is defined and
+              (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+            )
+
+    - name: check all processes
+      ansible.builtin.command: ps aux
+      changed_when: false
+      register: psa
+    - name: Debug | ps aux output
+      ansible.builtin.debug: var=psa verbosity=1
+
+    - name: Ensure ports are listening
+      ansible.builtin.wait_for:
+        host: "{{ item.h }}"
+        port: "{{ item.p }}"
+        timeout: 10
+      with_items: "{{ ports }}"
+      when: >
+        not (ansible_virtualization_type is defined and
+              (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+            )
+
+    - name: Fetch localhost endpoint
+      ansible.builtin.uri:
+        url: "{{ url }}"
+        validate_certs: no
+        return_content: yes
+        url_username: admin
+        url_password: admin
+        # url_password: changeme
+      register: web
+      failed_when: false
+    - name: Validate localhost endpoint
+      ansible.builtin.assert:
+        that:
+          - web.status == 200
+          - "'You need to enable JavaScript to run this app.' in web.content"
+      when: >
+        not (ansible_virtualization_type is defined and
+              (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+            )
+
+    # test collection?
