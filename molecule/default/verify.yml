@@ -14,6 +14,12 @@
       # web UI
       - { h: localhost, p: 8889 }
     url: https://localhost:8889
+  pre_tasks:
+    - name: RedHat | install procps-ng
+      ansible.builtin.package:
+        name: procps-ng
+        state: present
+      when: ansible_os_family == "RedHat"
   tasks:
     - name: Check client systemd is present
       ansible.builtin.stat:
