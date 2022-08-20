@@ -1,4 +1,4 @@
 ---
-velociraptor_url: "https://github.com/Velocidex/velociraptor/releases/download/{{ velociraptor_version }}/velociraptor-{{ velociraptor_version }}-darwin-amd64"
+velociraptor_url: "https://github.com/Velocidex/velociraptor/releases/download/{{ velociraptor_version_topdir | default(velociraptor_version) }}/velociraptor-{{ velociraptor_version_patch | default(velociraptor_version) }}-darwin-amd64"
 velociraptor_dir: /opt/velociraptor
 velociraptor_config_dir: /etc/velociraptor
