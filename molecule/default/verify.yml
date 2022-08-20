@@ -20,6 +20,11 @@
         name: procps-ng
         state: present
       when: ansible_os_family == "RedHat"
+    - name: Debian | install procps
+      ansible.builtin.package:
+        name: procps-ng
+        state: present
+      when: ansible_os_family == "Debian"
   tasks:
     - name: Check client systemd is present
       ansible.builtin.stat:
