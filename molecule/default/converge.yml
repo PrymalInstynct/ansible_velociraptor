@@ -24,7 +24,8 @@
       register: python3
       changed_when: "'installed' in python3.stdout"
       when: (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
-    - block:
+    - name: Python3
+      block:
         - name: Gather Facts
           ansible.builtin.setup:
         - name: Ubuntu Bionic+, Redhat 8+ | Enforce python3 for ansible
