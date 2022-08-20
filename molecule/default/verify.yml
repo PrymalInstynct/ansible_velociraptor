@@ -22,7 +22,7 @@
       when: ansible_os_family == "RedHat"
     - name: Debian | install procps
       ansible.builtin.package:
-        name: procps-ng
+        name: procps
         state: present
       when: ansible_os_family == "Debian"
   tasks:
