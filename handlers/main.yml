@@ -1,5 +1,5 @@
 ---
-- name: restart velociraptor-server
+- name: Restart velociraptor-server
   ansible.builtin.systemd:
     name: velociraptor
     state: restarted
@@ -14,7 +14,7 @@
   ansible.builtin.debug:
     msg: "You can reach Velociraptor via https://{{ ansible_default_ipv4.address }}:8889/"
 
-- name: restart velociraptor nix client
+- name: Restart velociraptor nix client
   ansible.builtin.systemd:
     name: velociraptor-client
     state: restarted
@@ -25,7 +25,7 @@
           (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
         )
 
-- name: restart velociraptor windows client
-  win_service:
+- name: Restart velociraptor windows client
+  ansible.windows.win_service:
     name: Velociraptor
     state: restarted

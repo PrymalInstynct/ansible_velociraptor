@@ -42,7 +42,8 @@
     creates: "{{ velociraptor_config_dir }}/server.config.yaml"
   register: server_config
   failed_when: "server_config.stderr is defined and 'Invalid merge patch' in server_config.stderr"
-  notify: restart velociraptor-server
+  notify:
+    - Restart velociraptor-server
 
 - name: "Install Server | Validate Velociraptor Server Config permissions"
   ansible.builtin.file:
@@ -99,5 +100,5 @@
     mode: '0644'
   register: systemd
   notify:
-    - restart velociraptor-server
+    - Restart velociraptor-server
     - URL

@@ -1,4 +1,5 @@
 ---
-- hosts: all
+- name: Windows velociraptor playbook
+  hosts: all
   roles:
     - prymalinstynct.velociraptor

@@ -1,15 +1,16 @@
 ---
 - name: "Uninstall Server"
-  import_tasks: uninstall/uninstall_server.yml
-  when: velociraptor_server == true
+  ansible.builtin.import_tasks: uninstall/uninstall_server.yml
+  when:
+    - velociraptor_server|bool
   tags:
     - never
     - uninstall_server
 
 - name: "Uninstall Linux Client"
-  import_tasks: uninstall/uninstall_linux_client.yml
+  ansible.builtin.import_tasks: uninstall/uninstall_linux_client.yml
   when:
-    - velociraptor_client == true
+    - velociraptor_client|bool
     - ansible_os_family != "Windows"
     - ansible_os_family != "Darwin"
   tags:
@@ -17,18 +18,18 @@
     - uninstall_client
 
 - name: "Uninstall MacOS Client"
-  import_tasks: uninstall/uninstall_mac_client.yml
+  ansible.builtin.import_tasks: uninstall/uninstall_mac_client.yml
   when:
-    - velociraptor_client == true
+    - velociraptor_client|bool
     - ansible_os_family == "Darwin"
   tags:
     - never
     - uninstall_client
 
 - name: "Uninstall Windows Client"
-  import_tasks: uninstall/uninstall_windows_client.yml
+  ansible.builtin.import_tasks: uninstall/uninstall_windows_client.yml
   when:
-    - velociraptor_client == true
+    - velociraptor_client|bool
     - ansible_os_family == "Windows"
   tags:
     - never
