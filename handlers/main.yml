@@ -5,10 +5,8 @@
     state: restarted
     daemon_reload: true
     enabled: true
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
-        )
+  when:
+    - not is_container|bool
 
 - name: URL
   ansible.builtin.debug:
@@ -20,10 +18,8 @@
     state: restarted
     daemon_reload: true
     enabled: true
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
-        )
+  when:
+    - not is_container|bool
 
 - name: Restart velociraptor windows client
   ansible.windows.win_service:
