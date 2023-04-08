@@ -102,7 +102,9 @@ jobs:
           set -x
           ss -tunap
           curl -v http://localhost:8889 || true
+          curl -v http://localhost:8889/frontend/ || true
           curl -vk https://localhost || true
+          curl -vk https://localhost/frontend/ || true
         if: ${{ always() }}
         continue-on-error: true
       - name: After script - velociraptor
