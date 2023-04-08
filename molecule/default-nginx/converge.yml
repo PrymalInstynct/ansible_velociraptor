@@ -11,6 +11,7 @@
     velociraptor_client: true
     velociraptor_server: true
     velociraptor_admin_password: password
+    velociraptor_frontend_base_path: 'frontend'
     # velociraptor_fqdn: velociraptor.example.com
     velociraptor_fqdn: "{{ ansible_fqdn }}"
     hardenwebserver_disable_http: true
