@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - prymalinstynct.velociraptor
+    - juju4.harden_nginx
