@@ -97,7 +97,7 @@ Uninstall the Clients on Windows based systems:
 ansible-playbook -i inventory.yml win-velociraptor-playbook.yml --ask-vault --tag uninstall_client
 ```
 
-## Known Issues
+## Troubleshooting, Known Issues
 
 * As velociraptor is generating the server config file (because of secrets), idempotence check is based on file existence. If you change settings after initial setup, you must remove the existing config file before running again playbook. It will also regenerate secrets including certificates, meaning playbook must be re-executed on all agents too. Alternatively, you can directly edit settings on velociraptor server and when necessary, clients.
 
@@ -108,6 +108,8 @@ sudo /opt/velociraptor/velociraptor --config /etc/velociraptor/server.config.yam
 
 * If using a reverse-proxy like nginx, set plain http options.
 https://velociraptor.velocidex.com/velociraptor-network-communications-30568624043a
+
+* https://docs.velociraptor.app/docs/deployment/troubleshooting/
 
 ## License
 
