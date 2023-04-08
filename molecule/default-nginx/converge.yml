@@ -57,6 +57,7 @@
     - name: Set hostname
       ansible.builtin.hostname:
         name: "{{ velociraptor_fqdn }}"
+      when: velociraptor_fqdn | length <= 64
   roles:
     - prymalinstynct.velociraptor
     - juju4.harden_nginx
