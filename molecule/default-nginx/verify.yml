@@ -1,0 +1,119 @@
+---
+
+- name: Verify
+  hosts: dinosaurs
+  vars:
+    server_config_file: /etc/velociraptor/server.config.yaml
+    server_datastore: /var/tmp/velociraptor
+    ports:
+      # clients access
+      - { h: 0.0.0.0, p: 8888 }
+      # API
+      - { h: localhost, p: 8001 }
+      - { h: localhost, p: 8003 }
+      # web UI
+      - { h: localhost, p: 8889 }
+      # nginx
+      - { h: 0.0.0.0, p: 443 }
+    url: https://localhost
+    is_container: false
+  pre_tasks:
+    - name: Debug | var ansible_virtualization_type
+      ansible.builtin.debug:
+        var: ansible_virtualization_type
+    - name: Set fact is_container
+      ansible.builtin.set_fact:
+        is_container: true
+      when: >
+        (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd"
+           or ansible_virtualization_type == "container"
+          )
+        )
+    - name: RedHat | install procps-ng
+      ansible.builtin.package:
+        name: procps-ng
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: Debian | install procps
+      ansible.builtin.package:
+        name: procps
+        state: present
+      when: ansible_os_family == "Debian"
+  tasks:
+    - name: Check client systemd is present
+      ansible.builtin.stat:
+        path: /lib/systemd/system/velociraptor-client.service
+      register: systemd
+    - name: Validate systemd service file is present
+      ansible.builtin.assert:
+        that: systemd.stat.exists
+
+    - name: Run velociraptor version
+      ansible.builtin.command: /opt/velociraptor/velociraptor version
+      changed_when: false
+      register: v
+    - name: Validate run
+      ansible.builtin.assert:
+        that: "'name: velociraptor' in v.stdout"
+
+    # server side
+    - name: Check velociraptor server config file
+      ansible.builtin.stat:
+        path: "{{ server_config_file }}"
+      register: cfg
+    - name: Validate velociraptor server config is present
+      ansible.builtin.assert:
+        that:
+          - cfg.stat.exists
+          - cfg.stat.size != 0
+          - cfg.stat.mode == '0640'
+
+    - name: Ensure velociraptor process is running
+      ansible.builtin.command: pgrep -u root velociraptor
+      register: ps3
+      changed_when: false
+      failed_when: false
+    - name: Validate ps output
+      ansible.builtin.assert:
+        that: ps3.stdout
+      when:
+        - not is_container|bool
+
+    - name: Check all processes
+      ansible.builtin.command: ps aux
+      changed_when: false
+      register: psa
+    - name: Debug | ps aux output
+      ansible.builtin.debug:
+        var: psa
+        verbosity: 1
+
+    - name: Ensure ports are listening
+      ansible.builtin.wait_for:
+        host: "{{ item.h }}"
+        port: "{{ item.p }}"
+        timeout: 10
+      with_items: "{{ ports }}"
+      when:
+        - not is_container|bool
+
+    - name: Fetch localhost endpoint
+      ansible.builtin.uri:
+        url: "{{ url }}"
+        validate_certs: no
+        return_content: yes
+        url_username: admin
+        url_password: admin
+        # url_password: changeme
+      register: web
+      failed_when: false
+    - name: Validate localhost endpoint
+      ansible.builtin.assert:
+        that:
+          - web.status == 200
+          - "'You need to enable JavaScript to run this app.' in web.content"
+      when:
+        - not is_container|bool
+
+    # test collection?

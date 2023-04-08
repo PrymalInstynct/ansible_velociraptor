@@ -9,7 +9,6 @@ ExecStart={{ velociraptor_dir }}/velociraptor --config {{ velociraptor_config_di
 WorkingDirectory={{ velociraptor_dir }}
 Restart=always
 RestartSec=10
-StandardOutput=syslog
 SyslogIdentifier=velociraptor
 User=root
 Group=nogroup

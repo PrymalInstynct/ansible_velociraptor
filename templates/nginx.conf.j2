@@ -1,0 +1,66 @@
+# https://velociraptor.velocidex.com/velociraptor-network-communications-30568624043a
+
+server {
+    listen 80 default_server;
+    server_name _;
+    server_tokens off;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+
+    listen [::]:443 ssl ipv6only=on;
+    listen 443 ssl;
+
+    include /etc/nginx/harden-nginx-https;
+
+{% if hardenwebserver_cert is defined and (hardenwebserver_cert == 'selfsigned' or hardenwebserver_cert == 'mkcert' or hardenwebserver_cert == 'stepca') %}
+    ssl_certificate {{ hardenwebserver_ssl_cert | default(ssl_dir + "/" + ansible_fqdn + ".crt") }};
+    ssl_certificate_key {{ hardenwebserver_ssl_key | default(ssl_privatedir + "/" + ansible_fqdn + ".key") }};
+{% else %}
+    ssl_certificate {{ hardenwebserver_ssl_cert | default(ssl_fullchain) }};
+    ssl_certificate_key {{ hardenwebserver_ssl_key | default(ssl_privkey) }};
+{% endif %}
+
+    server_name {{ velociraptor_fqdn }};
+
+    access_log /var/log/nginx/velociraptor.access.log;
+    error_log /var/log/nginx/velociraptor.error.log;
+
+    server_tokens off;
+    etag off;
+
+    location / {
+        proxy_pass http://127.0.0.1:8889;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_request_buffering off;
+    }
+
+    location /frontend {
+        add_header X-Content-Type-Options nosniff;
+        add_header X-Frame-Options SAMEORIGIN;
+        #add_header X-Frame-Options DENY;
+        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+        # CSP?
+        add_header Content-Security-Policy "{{ hardenwebserver_header_csp }}";
+        #add_header Referrer-Policy strict-origin-when-cross-origin;
+        add_header Referrer-Policy origin;
+
+        proxy_pass http://127.0.0.1:8000/frontend;
+        proxy_pass_request_headers on;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_request_buffering off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        # If you want to log the remote port of the file senders, you'll need that
+        proxy_set_header X-Remote-Port $remote_port;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_redirect     off;
+    }
+}

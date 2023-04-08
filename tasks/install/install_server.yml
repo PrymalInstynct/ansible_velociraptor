@@ -33,7 +33,13 @@
           \"bind_port\": {{ velociraptor_api_port }}
        }, \"GUI\": {
           \"bind_address\": \"{{ velociraptor_gui_host }}\",
-          \"bind_port\": {{ velociraptor_gui_port }}
+          \"bind_port\": {{ velociraptor_gui_port }},
+          \"use_plain_http\": {{ velociraptor_gui_use_plain_http | lower }}
+       }, \"Frontend\": {
+          \"bind_address\": \"{{ velociraptor_frontend_host }}\",
+          \"bind_port\": {{ velociraptor_frontend_port }},
+          \"base_path\": \"/{{ velociraptor_frontend_base_path }}\",
+          \"use_plain_http\": {{ velociraptor_frontend_use_plain_http | lower }}
        }, \"Datastore\": {
           \"location\": \"{{ velociraptor_datastore_path }}/\",
           \"filestore_directory\": \"{{ velociraptor_datastore_path }}/\"
