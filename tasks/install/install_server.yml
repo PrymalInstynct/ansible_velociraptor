@@ -70,6 +70,7 @@
     dest: "{{ role_path }}/files/client.config.yaml"
     mode: '0664'
   delegate_to: localhost
+  become: false
 
 - name: "Install Server | Update Apt Cache"
   ansible.builtin.apt:
