@@ -24,4 +24,10 @@ velociraptor_gui_host: '127.0.0.1'
 velociraptor_gui_port: 8889
 velociraptor_datastore_path: /var/tmp/velociraptor
 
+# This will set proxy in systemd environment
+# alternative: https://github.com/Velocidex/velociraptor/blob/master/docs/references/server.config.yaml#L453
+velociraptor_webproxy_host: ''
+velociraptor_webproxy_port: ''
+velociraptor_webproxy_ignore: ''
+
 is_container: false
