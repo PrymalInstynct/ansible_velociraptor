@@ -30,4 +30,9 @@ velociraptor_webproxy_host: ''
 velociraptor_webproxy_port: ''
 velociraptor_webproxy_ignore: ''
 
+# using a reverse proxy?
+velociraptor_reverseproxy: false
+# https://github.com/Velocidex/velociraptor/pull/54
+velociraptor_reverseproxy_proxy_header: X-Real-IP
+
 is_container: false
