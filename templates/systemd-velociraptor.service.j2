@@ -5,6 +5,11 @@ After=network.target
 
 [Service]
 Type=simple
+{% if velociraptor_webproxy_host|string and velociraptor_webproxy_port|string %}
+Environment=HTTP_PROXY={{ velociraptor_webproxy_host }}:{{ velociraptor_webproxy_port }}
+Environment=HTTPS_PROXY={{ velociraptor_webproxy_host }}:{{ velociraptor_webproxy_port }}
+Environment=NO_PROXY={{ velociraptor_webproxy_ignore }}
+{% endif %}
 ExecStart={{ velociraptor_dir }}/velociraptor --config {{ velociraptor_config_dir }}/server.config.yaml frontend
 WorkingDirectory={{ velociraptor_dir }}
 Restart=always
