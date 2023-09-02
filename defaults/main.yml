@@ -2,11 +2,11 @@
 
 velociraptor_client: false
 velociraptor_server: false
-velociraptor_version: "v0.6.9"
+velociraptor_version: "v0.7.0"
 # only if patch version and difference in versions used in download url
 # leave undefined or empty else
-velociraptor_version_topdir: v0.6.9
-velociraptor_version_patch: v0.6.9
+velociraptor_version_topdir: v0.7.0
+velociraptor_version_patch: v0.7.0
 velociraptor_admin_user: admin
 velociraptor_admin_password: "{{ vault_velociraptor_admin_password }}"
 velociraptor_host: "{{ ansible_default_ipv4.address }}"
