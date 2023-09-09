@@ -14,6 +14,12 @@
     - "{{ velociraptor_dir }}"
     - "{{ velociraptor_config_dir }}"
 
+- name: Set fact if use musl
+  ansible.builtin.set_fact:
+    velociraptor_url: "{{ velociraptor_musl_url }}"
+  when:
+    - velociraptor_use_musl | bool
+
 - name: "Install Server | Download Velociraptor Binary"
   ansible.builtin.get_url:
     url: "{{ velociraptor_url }}"
