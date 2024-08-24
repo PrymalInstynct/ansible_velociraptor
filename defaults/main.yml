@@ -6,7 +6,7 @@ velociraptor_version: "v0.72"
 # only if patch version and difference in versions used in download url
 # leave undefined or empty else
 velociraptor_version_topdir: v0.72
-velociraptor_version_patch: v0.72
+velociraptor_version_patch: v0.72.0
 velociraptor_use_musl: false
 velociraptor_musl_url: "https://github.com/Velocidex/velociraptor/releases/download/{{ velociraptor_version_topdir | default(velociraptor_version) }}/velociraptor-{{ velociraptor_version_patch | default(velociraptor_version) }}-linux-amd64-musl"
 velociraptor_admin_user: admin
