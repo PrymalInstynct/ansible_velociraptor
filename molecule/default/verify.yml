@@ -51,6 +51,7 @@
       ansible.builtin.command: /opt/velociraptor/velociraptor version
       changed_when: false
       register: v
+      become: yes
     - name: Validate run
       ansible.builtin.assert:
         that: "'name: velociraptor' in v.stdout"

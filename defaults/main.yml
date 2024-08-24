@@ -2,11 +2,13 @@
 
 velociraptor_client: false
 velociraptor_server: false
-velociraptor_version: "v0.6.9"
+velociraptor_version: "v0.72"
 # only if patch version and difference in versions used in download url
 # leave undefined or empty else
-velociraptor_version_topdir: v0.6.9
-velociraptor_version_patch: v0.6.9
+velociraptor_version_topdir: v0.72
+velociraptor_version_patch: v0.72
+velociraptor_use_musl: false
+velociraptor_musl_url: "https://github.com/Velocidex/velociraptor/releases/download/{{ velociraptor_version_topdir | default(velociraptor_version) }}/velociraptor-{{ velociraptor_version_patch | default(velociraptor_version) }}-linux-amd64-musl"
 velociraptor_admin_user: admin
 velociraptor_admin_password: "{{ vault_velociraptor_admin_password }}"
 velociraptor_host: "{{ ansible_default_ipv4.address }}"
