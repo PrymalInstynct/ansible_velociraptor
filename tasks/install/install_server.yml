@@ -86,7 +86,7 @@
   when: ansible_os_family == "Debian"
 
 - name: "Install Server | Update Yum Cache"
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     update_cache: true
   when: ansible_os_family == "RedHat"
 
