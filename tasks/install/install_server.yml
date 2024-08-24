@@ -94,6 +94,9 @@
   ansible.builtin.package:
     name: python3-pip
 
+- name: "Import python-externally-managed"
+  ansible.builtin.import_tasks: python-externally-managed.yml
+
 - name: "Install Server | PIP Install pexpect"
   ansible.builtin.pip:
     name: pexpect
