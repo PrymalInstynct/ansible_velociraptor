@@ -86,13 +86,16 @@
   when: ansible_os_family == "Debian"
 
 - name: "Install Server | Update Yum Cache"
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     update_cache: true
   when: ansible_os_family == "RedHat"
 
 - name: "Install Server | Install pip3"
   ansible.builtin.package:
     name: python3-pip
+
+- name: "Import python-externally-managed"
+  ansible.builtin.import_tasks: python-externally-managed.yml
 
 - name: "Install Server | PIP Install pexpect"
   ansible.builtin.pip:
