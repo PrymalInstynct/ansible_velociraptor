@@ -26,6 +26,7 @@ velociraptor_gui_auth_type: Basic
 # velociraptor_gui_auth_avatar:
 # velociraptor_gui_auth_oauth_client_id:
 # velociraptor_gui_auth_oauth_client_secret:
+# Note: frontend and api bind_address (aka *_host var) should only be 127.0.0.1 or 0.0.0.0
 velociraptor_frontend_host: 0.0.0.0
 velociraptor_frontend_port: 8000
 velociraptor_frontend_base_path: ''
